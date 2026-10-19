@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        TISS Overhaul
 // @namespace   https://github.com/Eletronitar/TISS-Overhaul
-// @version     1.0
+// @version     1.0.1
 // @description TU Wien TISS neu gestaltet und erweitert: Favoriten mit Status, Kalender mit Farben und Raum-Links, Offline-Kalender, Anmelde-Countdown und Auto-Anmeldung, unscharfe Suche, Einstellungen
 // @author      Eletronitar
 // @license     GPL-3.0
@@ -375,7 +375,7 @@
     .tiss-fav-group .subscriptionGroupHead { margin:0 !important; padding:12px 16px; display:flex; align-items:center; gap:10px; background:#f8fafc; user-select:none; }
     .tiss-fav-group .subscriptionGroupHead:hover { background:#eef3f7; }
     .tiss-fav-group .subscriptionGroupHead br { display:none; }
-    .tiss-fav-group h3.subscriptionGroupTitle { margin:0 !important; font-size:17px !important; }
+    #contentInner .tiss-fav-group h3.subscriptionGroupTitle { margin:0 !important; padding:0 !important; font-size:17px !important; font-weight:700 !important; color:var(--t-text) !important; text-transform:none !important; letter-spacing:0 !important; line-height:1.3 !important; }
     .tiss-chev { display:inline-block; transition:transform .15s; color:var(--t-muted); width:14px; }
     .tiss-fav-group.collapsed .tiss-chev { transform:rotate(-90deg); }
     .tiss-fav-meta { color:var(--t-muted); font-size:13px; }
@@ -573,7 +573,7 @@
     .fc .fc-timegrid-now-indicator-line { border-color:var(--t-orange) !important; border-width:2px 0 0; }
     .fc .fc-timegrid-now-indicator-arrow { border-color:var(--t-orange) !important; }
     .fc .fc-daygrid-day-number, .fc .fc-daygrid-day-top a { color:var(--t-text) !important; text-decoration:none !important; }
-    #contentInner h3 { font-size:15px !important; font-weight:700 !important; color:var(--t-muted) !important; text-transform:uppercase; letter-spacing:.5px; margin-top:22px !important; }
+    #contentInner h3:not(.subscriptionGroupTitle) { font-size:15px !important; font-weight:700 !important; color:var(--t-muted) !important; text-transform:uppercase; letter-spacing:.5px; margin-top:22px !important; }
     a.fc-timegrid-event, a.fc-daygrid-event { border:0 !important; border-radius:6px !important; box-shadow:0 1px 2px rgba(0,0,0,.15); color:#fff !important; }
     a.fc-timegrid-event[data-tiss-color], a.fc-timegrid-event[data-tiss-color] .fc-event-main,
     a.fc-daygrid-event[data-tiss-color], a.fc-daygrid-event[data-tiss-color] .fc-event-main { background:var(--tiss-ev) !important; background-image:none !important; border-color:var(--tiss-ev) !important; }
