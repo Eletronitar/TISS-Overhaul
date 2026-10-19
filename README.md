@@ -16,6 +16,8 @@ Drag it yourself: **[interactive before/after comparison](https://eletronitar.gi
 |---|---|
 | ![Favoriten with live status badges, exam cards and compact view](docs/favoriten.png) | ![Week calendar with a colour per course and dashed exams](docs/kalender.png) |
 
+*About these images:* they are not screen captures but renderings of the page's HTML (via html2canvas), with personal data replaced by placeholders. The renderer gets a few things slightly wrong – text spacing, some alignments, the vertical section tabs – that look fine in the browser. Better screenshots are on the to-do list.
+
 ## Installation
 
 1. Install a userscript manager: [Violentmonkey](https://violentmonkey.github.io/) (recommended; Firefox, Chrome, Edge, Firefox for Android), [Tampermonkey](https://www.tampermonkey.net/) or Greasemonkey.
@@ -51,6 +53,7 @@ Every feature can be switched off individually in the settings; the top switch d
 - **Nachrichten** – a bell icon in the top bar that shows new messages at a glance
 - **Polish** – smoothing out visual imperfections and making the design coherent across all pages
 - Verifying the keep-alive option against TU's MFA re-login behaviour
+- Better screenshots and before/after slider (real captures, more pages)
 
 Have something else in mind? See below.
 
