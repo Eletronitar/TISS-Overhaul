@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TISS Overhaul – vorher / nachher</title>
+<style>
+  :root { --blue:#006699; --bg:#eef2f7; --text:#1f2933; --muted:#6b7280; }
+  body { margin:0; background:var(--bg); color:var(--text); font:15px/1.5 "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+  .wrap { max-width:1200px; margin:0 auto; padding:28px 16px 48px; }
+  h1 { font-size:24px; margin:0 0 4px; }
+  p.lead { margin:0 0 18px; color:var(--muted); }
+  .cmp { position:relative; width:100%; aspect-ratio: var(--ar, 16/9); border-radius:14px; overflow:hidden; box-shadow:0 14px 40px rgba(15,23,42,.18); background:#fff; user-select:none; touch-action:none; }
+  .cmp img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:top left; display:block; pointer-events:none; }
+  .cmp .after { clip-path: inset(0 calc(100% - var(--x, 50%)) 0 0); }
+  .cmp .bar { position:absolute; top:0; bottom:0; left:var(--x, 50%); width:3px; background:#fff; box-shadow:0 0 0 1px var(--blue); transform:translateX(-50%); }
+  .cmp .knob { position:absolute; top:50%; left:var(--x, 50%); width:44px; height:44px; border-radius:50%; background:var(--blue); border:3px solid #fff; transform:translate(-50%,-50%); display:flex; align-items:center; justify-content:center; box-shadow:0 4px 14px rgba(0,0,0,.25); cursor:ew-resize; }
+  .cmp .knob svg { width:22px; height:22px; stroke:#fff; fill:none; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; }
+  .cmp .tag { position:absolute; top:12px; padding:5px 11px; border-radius:999px; font-size:12px; font-weight:700; letter-spacing:.5px; text-transform:uppercase; background:rgba(255,255,255,.9); color:var(--text); box-shadow:0 1px 4px rgba(0,0,0,.15); }
+  .cmp .tag.l { left:12px; } .cmp .tag.r { right:12px; }
+  .cmp input[type=range] { position:absolute; inset:0; width:100%; height:100%; opacity:0; margin:0; cursor:ew-resize; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(320px,1fr)); gap:18px; margin-top:28px; }
+  .grid figure { margin:0; }
+  .grid img { width:100%; border-radius:12px; box-shadow:0 8px 24px rgba(15,23,42,.14); display:block; }
+  .grid figcaption { font-size:13px; color:var(--muted); margin-top:8px; }
+  a { color:var(--blue); }
+  footer { margin-top:28px; font-size:13px; color:var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>TISS Overhaul – vorher / nachher</h1>
+  <p class="lead">Regler ziehen (oder Pfeiltasten), um TISS mit und ohne Overhaul zu vergleichen.</p>
+
+  <div class="cmp" id="cmp" style="--ar: 3976/2136;">
+    <img src="before.png" alt="TISS ohne Overhaul">
+    <img src="after.png" class="after" alt="TISS mit Overhaul">
+    <span class="tag l">Nachher</span><span class="tag r">Vorher</span>
+    <div class="bar"></div>
+    <div class="knob"><svg viewBox="0 0 24 24"><path d="M9 6l-6 6 6 6M15 6l6 6-6 6"/></svg></div>
+    <input type="range" min="0" max="100" value="50" step="0.1" aria-label="Vergleich: vorher / nachher">
+  </div>
+
+  <div class="grid">
+    <figure><img src="favoriten.png" alt="Favoriten mit Statusanzeigen"><figcaption>Favoriten: Anmelde-, Gruppen-, Prüfungs- und TUWEL-Status auf einen Blick, Kompaktansicht für VO/VU/UE.</figcaption></figure>
+    <figure><img src="kalender.png" alt="Wochenkalender mit Farben pro LVA"><figcaption>Kalender: Farbe pro LVA, Prüfungen gestrichelt, Raum- und Kartenlinks im Popup.</figcaption></figure>
+  </div>
+
+  <footer>Installation und Quellcode: <a href="https://github.com/Eletronitar/TISS-Overhaul">github.com/Eletronitar/TISS-Overhaul</a> · GPL-3.0</footer>
+</div>
+<script>
+  const cmp = document.getElementById('cmp'), range = cmp.querySelector('input');
+  const set = v => cmp.style.setProperty('--x', v + '%');
+  range.addEventListener('input', () => set(range.value));
+  set(range.value);
+</script>
+</body>
+</html>

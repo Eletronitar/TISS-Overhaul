@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        TISS Overhaul
 // @namespace   https://github.com/Eletronitar/TISS-Overhaul
-// @version     1.0.1
+// @version     1.1
 // @description TU Wien TISS neu gestaltet und erweitert: Favoriten mit Status, Kalender mit Farben und Raum-Links, Offline-Kalender, Anmelde-Countdown und Auto-Anmeldung, unscharfe Suche, Einstellungen
 // @author      Eletronitar
 // @license     GPL-3.0
@@ -60,6 +60,7 @@
     { key: 'enabled', label: 'TISS Overhaul aktiv', hint: 'Schaltet alle Änderungen an dieser Seite ein oder aus.', def: true, master: true },
     { key: 'layout', label: 'Neues Design', hint: 'Kopfzeile, Seitenleiste, Bereichs-Tabs, Buttons und Tabellen.', def: true },
     { key: 'navExtras', label: 'Seitenleiste: selten Gebrauchtes unter „Extras“ zusammenfassen', hint: 'Best Teaching Awards, Vorregistrierung, Mobility Services, Unterstützungsangebote.', def: true },
+    { key: 'keepAlive', label: 'Sitzung wach halten', hint: 'Fragt TISS alle 5 Minuten leise im Hintergrund ab, solange ein TISS-Tab offen ist – die Sitzung läuft nicht wegen Inaktivität ab. Hilft nicht gegen eine feste Höchstdauer.', def: true },
     { group: 'Favoriten' },
     { key: 'favStatus', label: 'Anmelde-, Gruppen- und Prüfungsstatus laden', hint: 'Holt den Status jeder LVA im Hintergrund (einmal alle 6 h).', def: true },
     { key: 'favTuwel', label: 'TUWEL-Inhalte prüfen', hint: 'Zeigt, ob und wie viel im TUWEL-Kurs schon steht.', def: true },
@@ -129,7 +130,20 @@
     html { background:var(--t-bg) !important; }
     body.lehre, body.forschung, body.organisation { background:var(--t-bg) !important; color:var(--t-text); font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important; }
     #glow_left, #glow_right, #shadow_top, #footerShadow-left, #footerShadow-right { display:none !important; }
-    #contentInner { padding:28px 36px !important; }
+    /* ---------- footer: drop the sprite blocks, keep the links ---------- */
+    #footer, #footerContent, #footerShadow, #footer-left, #footer-right, #pageEnd, #baseLinks, #legalInfo { background:none !important; background-image:none !important; border:0 !important; box-shadow:none !important; height:auto !important; min-height:0 !important; float:none !important; position:static !important; }
+    #footerContent, #footer-left, #footer-right, #pageEnd { display:none !important; }
+    #footer { margin:0 !important; padding:0 !important; width:auto !important; }
+    #footerShadow { display:block !important; width:auto !important; margin:0 !important; padding:22px 36px 30px !important; border-top:1px solid var(--t-border) !important; text-align:center; color:var(--t-muted) !important; font-size:12px !important; line-height:1.7; }
+    #baseLinks { margin:0 0 4px !important; padding:0 !important; width:auto !important; }
+    #baseLinks a { color:var(--t-muted) !important; font-weight:600; text-decoration:none !important; margin:0 4px; }
+    #baseLinks a:hover { color:var(--t-blue) !important; }
+    #legalInfo { margin:0 !important; padding:0 !important; width:auto !important; color:var(--t-muted) !important; }
+    #legalInfo .versionInfo { display:block; opacity:.7; }
+    /* TISS gives these fixed/100% widths with content-box sizing, so padding would push the content under the tab column */
+    #content, #contentInnerWrapper, #contentInner { width:auto !important; max-width:none !important; min-width:0 !important; box-sizing:border-box !important; }
+    #contentInner { padding:20px 28px 24px 28px !important; }
+    #contentInner > *, #contentInner form, #contentInner .ui-datatable, #contentInner table { max-width:100%; }
     #contentInner h1 { font-size:26px !important; font-weight:600 !important; border-bottom:2px solid var(--t-border) !important; padding-bottom:10px !important; }
     #contentInner h1 .light { color:var(--t-muted) !important; font-weight:400 !important; }
     #subHeader { color:var(--t-muted) !important; margin-top:6px !important; }
@@ -157,6 +171,7 @@
     #logo h1 a::after { content:"Informations-Systeme\\A& Services"; white-space:pre; color:#fff !important; font:400 12.5px/1.35 Arial, Helvetica, sans-serif; letter-spacing:.09em; text-transform:uppercase; padding-bottom:3px; }
     /* ---------- page columns: sidebar | content | section tabs — redrawn, no sprites ---------- */
     #contentWrapper { display:flex !important; align-items:stretch; background:#fff !important; background-image:none !important; }
+    #contentInnerWrapper { background:none !important; background-image:none !important; }
     #supNav { float:none !important; position:relative !important; left:auto !important; top:auto !important; flex:0 0 240px; align-self:stretch; width:240px !important; height:auto !important; min-height:100%; margin:0 !important; padding:0 0 0 6px !important;
       background:var(--t-side) !important; background-image:none !important; box-sizing:border-box; overflow:hidden !important; z-index:2; }
     #supNav::before { content:""; position:absolute; left:0; top:0; bottom:0; width:6px; background:var(--t-sec); z-index:5; }
@@ -386,7 +401,8 @@
     .tiss-fav-group.collapsed > div:not(.subscriptionGroupHead) { display:none; }
     .tiss-fav-group.tiss-filter-open > div:not(.subscriptionGroupHead) { display:block !important; }
     .tiss-fav-group.tiss-filter-hidden { display:none; }
-    .tiss-fav-group .ui-datatable table { border:0 !important; table-layout:fixed; width:100% !important; }
+    .tiss-fav-group .ui-datatable table { border:0 !important; table-layout:fixed !important; width:100% !important; }
+    .tiss-fav-group .ui-datatable th, .tiss-fav-group .ui-datatable td { box-sizing:border-box !important; }
     .tiss-fav-group .ui-datatable th:nth-child(1), .tiss-fav-group .ui-datatable td:nth-child(1) { width:3%; }
     .tiss-fav-group .ui-datatable th:nth-child(2) { width:21%; }
     .tiss-fav-group .ui-datatable th:nth-child(3) { width:5.5%; }
@@ -448,14 +464,17 @@
 
     /* merged courses (Kompaktansicht) */
     tr.tiss-merge-row { cursor:pointer; user-select:none; }
-    tr.tiss-merge-row td { padding-top:12px !important; padding-bottom:12px !important; background:#f3f6fa !important; }
+    tr.tiss-merge-row td { padding-top:7px !important; padding-bottom:7px !important; background:#f3f6fa !important; vertical-align:middle !important; }
     tr.tiss-merge-row:hover td { background:#e8eef5 !important; }
     tr.tiss-merge-row td.tiss-merge-handle { text-align:center; }
     tr.tiss-merge-row .tiss-chev { width:auto; font-size:16px; color:var(--t-blue); }
     tr.tiss-merge-row:not(.open) .tiss-chev { transform:rotate(-90deg); }
     .tiss-merge-title { font-weight:600; font-size:15px; color:var(--t-blue); }
     .tiss-badge.tiss-type { background:#e0e7ff; color:#3730a3; margin-left:6px; }
-    .tiss-merge-hint { color:var(--t-muted); font-size:12px; font-style:italic; }
+    .tiss-merge-hint { color:var(--t-muted); font-size:12px; white-space:normal; }
+    .tiss-merge-hint .tiss-badge { margin:0 6px 0 0; font-style:normal; }
+    .tiss-merge-hint .gray { margin-right:12px; }
+    .tiss-merge-hinttext { font-style:italic; }
     tr.tiss-child { display:none; }
     tr.tiss-child.open { display:table-row; }
     tr.tiss-child.open td { background:#fafbfd !important; }
@@ -994,11 +1013,10 @@
         const open = !!st.mergeOpen[key];
         parent.innerHTML =
           `<td class="tiss-merge-handle"><span class="tiss-chev">▾</span></td>` +
-          `<td class="favoritesTitleCol" style="line-height:20px"><span class="tiss-merge-title">${infos[0].title}</span>` +
-          infos.map(i => `<span class="tiss-badge tiss-type">${i.type}</span>`).join('') +
-          `<br><span class="gray">${infos.map(i => i.nr).join(' · ')}, ${infos[0].sem}</span></td>` +
+          `<td class="favoritesTitleCol"><span class="tiss-merge-title">${infos[0].title}</span></td>` +
           `<td class="favoritesH">${sum('.favoritesH').toFixed(1)}</td><td class="favoritesECTS">${sum('.favoritesECTS').toFixed(1)}</td>` +
-          `<td colspan="${cols - 4}" class="tiss-merge-hint">${open ? '' : 'aufklappen für Details'}</td>`;
+          `<td colspan="${cols - 4}" class="tiss-merge-hint">` + infos.map(i => `<span class="tiss-badge tiss-type">${i.type} · ${i.nr}</span>`).join('') +
+          `<span class="gray">${infos[0].sem}</span><span class="tiss-merge-hinttext">${open ? '' : 'aufklappen für Details'}</span></td>`;
         parent.classList.toggle('open', open);
         group.forEach(r => { r.classList.add('tiss-child'); r.classList.toggle('open', open); });
         tbody.insertBefore(parent, group[0]);
@@ -1008,7 +1026,7 @@
           const o = !parent.classList.contains('open');
           parent.classList.toggle('open', o);
           group.forEach(r => r.classList.toggle('open', o));
-          parent.querySelector('.tiss-merge-hint').textContent = o ? '' : 'aufklappen für Details';
+          parent.querySelector('.tiss-merge-hinttext').textContent = o ? '' : 'aufklappen für Details';
           const s = favState(); s.mergeOpen = s.mergeOpen || {}; s.mergeOpen[key] = o; favSave(s);
         });
       });
@@ -1858,6 +1876,28 @@
   // ---------------------------------------------------------------
   // run + re-run after AJAX updates
   // ---------------------------------------------------------------
+  // keep the TISS session from idling out while any TISS tab is open (one ping per 5 min across tabs)
+  const KEEP_KEY = 'tissOverhaul.keepAlive';
+  function keepAlive() {
+    if (!S.enabled || !S.keepAlive || OFFLINE) return;
+    const EVERY = 5 * 60 * 1000;
+    const tick = async () => {
+      const st = store.get(KEEP_KEY, { last: 0, dead: 0 });
+      if (st.dead && Date.now() - st.dead < 60 * 60 * 1000) return; // session was gone – don't hammer the login page
+      if (Date.now() - st.last < EVERY - 5000) return;            // another tab pinged recently
+      store.set(KEEP_KEY, { last: Date.now(), dead: 0 });
+      try {
+        const token = String(Math.floor(Math.random() * 999));
+        document.cookie = `dsrwid-${token}=${bgWindowId}; expires=${new Date(Date.now() + 3000).toUTCString()}; path=/; SameSite=Strict`;
+        const r = await fetch(`${location.origin}/education/favorites.xhtml?dswid=${bgWindowId}&dsrid=${token}`, { credentials: 'same-origin', cache: 'no-store', redirect: 'follow' });
+        const gone = new URL(r.url).hostname !== location.hostname || r.status === 401 || r.status === 403;
+        if (gone) { store.set(KEEP_KEY, { last: Date.now(), dead: Date.now() }); diag('Keep-alive: Sitzung abgelaufen, bitte neu anmelden'); }
+      } catch (e) { /* offline or TISS down – next tick tries again */ }
+    };
+    // first ping only after the page has been open a while; ticks are throttled by the browser in background tabs, that's fine
+    setTimeout(tick, 60 * 1000);
+    setInterval(tick, 60 * 1000);
+  }
   function run() {
     vault.set('tiss.colors', store.get(COLOR_KEY, {})); vault.set('tiss.settings', S); vault.set('tiss.myGroups', store.get('tissOverhaul.myGroups', {})); vault.set('tiss.rooms', roomsDb());
     settingsButton();
@@ -1875,6 +1915,7 @@
   }
   function start() {
     run();
+    keepAlive();
     if (!S.enabled) return;
     const content = document.getElementById('contentInner') || document.body;
     let t;
